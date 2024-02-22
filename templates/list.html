@@ -1,0 +1,71 @@
+{% extends 'bootstrap/base.html' %}
+
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}Tasks{% endblock %}
+
+{% block styles %}
+    {{super()}}
+    <link rel="stylesheet" href="{{url_for('.static', filename='css/styles.css')}}">
+{% endblock %}
+
+{% block content %}
+
+<div class="jumbotron text-center">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <h1 class="display-4">✔ {{ list_name }} ✔</h1>
+                <hr class="my-4">
+                <table class="table">
+                    <!-- This is where you will write the code to render a Bootstrap
+                    Table that contains all the information from the
+                    cafe-data.csv file. -->
+                    <thead>
+                    <tr>
+                        {% for col_head in header %}
+                        <th scope="col" class="text-center">{{ header[col_head] }}</th>
+                        {% endfor %}
+                        <th scope="col" class="text-center">Mark completed</th>
+                        <th scope="col" class="text-center">Delete</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for t in tasks %}
+                    <tr>
+                        {% for col_head in header %}
+                            {% if col_head == "completed" %}
+                                {% if t[0][col_head] == 0 %}
+                                    <td>❌</td>
+                                {% else %}
+                                    <td>✅</td>
+                                {% endif %}
+                            {% elif col_head == "deadline" %}
+                                <td>{{ t[0][col_head].strftime("%d.%m.%Y") }}</td>
+                            {% else %}
+                                <td>{{ t[0][col_head] }}</td>
+                            {% endif %}
+                        {% endfor %}
+                        {% if t[0]["completed"] == 0 %}
+                            <td><a class="btn btn-success btn-sm" href="{{ url_for('mark_complete', id=t[0].id) }}" role="button">Done</a></td>
+                        {% else %}
+                            <td><a class="btn btn-success disabled btn-sm" href="" role="button">Done</a></td>
+                        {% endif %}
+                        <td><a class="btn btn-danger btn-sm" href="{{ url_for('del_task', id=t[0].id) }}" role="button">Delete</a></td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <hr class="my-4">
+                <p>
+                    {{ wtf.quick_form(form, method="POST") }}
+                </p>
+                <hr class="my-4">
+                <p>
+                    <a class="btn btn-warning btn-lg" href="." role="button">All lists</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends 'bootstrap/base.html' %}
+
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}Simple Todo List{% endblock %}
+
+{% block styles %}
+    {{super()}}
+    <link rel="stylesheet" href="{{url_for('.static', filename='css/styles.css')}}">
+{% endblock %}
+
+{% block content %}
+<div class="jumbotron text-center">
+    <div class="container">
+        <h1 class="display-4">✏ Simple Todo Lists ✏</h1>
+        <p class="lead">Keep your lists tide and simple</p>
+        <hr class="my-4">
+        {% if lists|length == 0 %}
+            <p>
+                You don't have any lists!
+            </p>
+        {% else %}
+            <h2>Your lists</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th class="text-center">ID</th>
+                        <th class="text-center">Name</th>
+                        <th class="text-center">Show</th>
+                        <th class="text-center">Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for l in lists %}
+                        <tr>
+                            <td>{{ l[0].id }}</td>
+                            <td><a href="{{ url_for('show_list', id=l[0].id) }}">{{ l[0].name }}</a></td>
+                            <td><a class="btn btn-info btn-sm" href="{{ url_for('show_list', id=l[0].id) }}" role="button">Show</a></td>
+                            <td><a class="btn btn-danger btn-sm" href="{{ url_for('del_list', id=l[0].id) }}" role="button">Delete</a></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+        <hr class="my-4">
+        <p>
+            {{ wtf.quick_form(form, method="POST") }}
+        </p>
+    </div>
+</div>
+
+{% endblock %}
